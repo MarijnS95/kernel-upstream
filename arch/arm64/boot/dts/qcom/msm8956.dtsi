@@ -1314,7 +1314,8 @@
 
 				interconnects = <&snoc MASTER_MDP_PORT0 &bimc SLAVE_EBI_CH0>,
 					<&snoc MASTER_MDP_PORT1 &bimc SLAVE_EBI_CH0>;
-				interconnect-names = "mdp0-mem", "mdp1-mem";//, "rotator-mem";
+					// TODO: ROTATOR: between 1 (MASTER_AMPSS_M0) and 590 (SLAVE_DISPLAY_CFG)
+				interconnect-names = "mdp0-mem", "mdp1-mem"; //, "rotator-mem";
 
 				/* TODO: Handle TBU and TBU_RT clocks */
 				clocks = <&gcc GCC_MDSS_AHB_CLK>,
