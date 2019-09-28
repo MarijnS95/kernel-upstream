@@ -725,20 +725,25 @@ static int qnoc_probe(struct platform_device *pdev)
 		int id;
 		u64 rate;
 
-		rate =  6400000000;
-
-		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, 0, rate);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 134, 721438000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 29, 721438000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 33, 261438000);
 		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 34, 400000000);
-		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 86, 793600000);
-		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, 115, 793600000);
-		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, 45, 853600000);
-		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 29, 853600000);
-		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 134, 853600000);
-		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, 197, 853600000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 35, 1046000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 41, 500000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 42, 60000000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 86, 661438000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 88, 60000000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, 0, 9581438000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, 115, 661438000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, 117, 60000000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, 197, 721438000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, 45, 721438000);
+
 		dev_err(dev, "manually hacking rates: %d\n", ret);
 
 
-		do_div(rate, 16);
+		rate = 9581438000;
 		dev_err(dev, "Setting clocks to %llu\n", rate);
 
 		for(id=0;id<qp->num_clks;++id)
