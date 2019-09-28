@@ -549,6 +549,8 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
 		goto err_msm_uninit;
 	}
 
+	dev_err(dev, "Installing IRQ on %d\n", kms->irq);
+
 	if (kms) {
 		pm_runtime_get_sync(dev);
 		ret = drm_irq_install(ddev, kms->irq);
@@ -660,6 +662,8 @@ static irqreturn_t msm_irq(int irq, void *arg)
 	struct msm_drm_private *priv = dev->dev_private;
 	struct msm_kms *kms = priv->kms;
 	BUG_ON(!kms);
+	WARN_ON(1);
+	dev_err(dev->dev, "%s\n", __func__);
 	return kms->funcs->irq(kms);
 }
 

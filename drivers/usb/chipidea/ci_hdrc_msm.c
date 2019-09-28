@@ -16,6 +16,8 @@
 
 #include "ci.h"
 
+#define DEBUG
+
 #define HS_PHY_AHB_MODE			0x0098
 
 #define HS_PHY_GENCONFIG		0x009c
@@ -178,7 +180,7 @@ static int ci_hdrc_msm_probe(struct platform_device *pdev)
 	int ret;
 	struct device_node *ulpi_node, *phy_node;
 
-	dev_dbg(&pdev->dev, "ci_hdrc_msm_probe\n");
+	dev_err(&pdev->dev, "ci_hdrc_msm_probe\n");
 
 	ci = devm_kzalloc(&pdev->dev, sizeof(*ci), GFP_KERNEL);
 	if (!ci)
@@ -193,24 +195,34 @@ static int ci_hdrc_msm_probe(struct platform_device *pdev)
 	ci->pdata.notify_event = ci_hdrc_msm_notify_event;
 
 	reset = devm_reset_control_get(&pdev->dev, "core");
-	if (IS_ERR(reset))
+	if (IS_ERR(reset)) {
+		dev_err(&pdev->dev, "core rest ERR %ld\n", PTR_ERR(reset));
 		return PTR_ERR(reset);
+	}
 
 	ci->core_clk = clk = devm_clk_get(&pdev->dev, "core");
-	if (IS_ERR(clk))
+	if (IS_ERR(clk)) {
+		dev_err(&pdev->dev, "core clk ERR %ld\n", PTR_ERR(clk));
 		return PTR_ERR(clk);
+	}
 
 	ci->iface_clk = clk = devm_clk_get(&pdev->dev, "iface");
-	if (IS_ERR(clk))
+	if (IS_ERR(clk)) {
+		dev_err(&pdev->dev, "iface clk ERR %ld\n", PTR_ERR(clk));
 		return PTR_ERR(clk);
+	}
 
 	ci->fs_clk = clk = devm_clk_get_optional(&pdev->dev, "fs");
-	if (IS_ERR(clk))
+	if (IS_ERR(clk)) {
+		dev_err(&pdev->dev, "fs clk ERR %ld\n", PTR_ERR(clk));
 		return PTR_ERR(clk);
+	}
 
 	ci->base = devm_platform_ioremap_resource(pdev, 1);
-	if (IS_ERR(ci->base))
+	if (IS_ERR(ci->base)) {
+		dev_err(&pdev->dev, "ioremap ERR %ld\n", PTR_ERR(ci->base));
 		return PTR_ERR(ci->base);
+	}
 
 	ci->rcdev.owner = THIS_MODULE;
 	ci->rcdev.ops = &ci_hdrc_msm_reset_ops;
@@ -245,7 +257,9 @@ static int ci_hdrc_msm_probe(struct platform_device *pdev)
 	ulpi_node = of_get_child_by_name(pdev->dev.of_node, "ulpi");
 	if (ulpi_node) {
 		phy_node = of_get_next_available_child(ulpi_node, NULL);
+		dev_info(&pdev->dev, "ulpi phy node %px\n", phy_node);
 		ci->hsic = of_device_is_compatible(phy_node, "qcom,usb-hsic-phy");
+		dev_info(&pdev->dev, "has hsic %d\n", ci->hsic);
 		of_node_put(phy_node);
 	}
 	of_node_put(ulpi_node);
@@ -254,6 +268,7 @@ static int ci_hdrc_msm_probe(struct platform_device *pdev)
 				     pdev->num_resources, &ci->pdata);
 	if (IS_ERR(plat_ci)) {
 		ret = PTR_ERR(plat_ci);
+		dev_err(&pdev->dev, "ci_hdrc_add_device failed %d!\n", ret);
 		if (ret != -EPROBE_DEFER)
 			dev_err(&pdev->dev, "ci_hdrc_add_device failed!\n");
 		goto err_mux;
@@ -264,6 +279,8 @@ static int ci_hdrc_msm_probe(struct platform_device *pdev)
 	pm_runtime_set_active(&pdev->dev);
 	pm_runtime_no_callbacks(&pdev->dev);
 	pm_runtime_enable(&pdev->dev);
+
+	dev_err(&pdev->dev, "%s ok\n", __func__);
 
 	return 0;
 

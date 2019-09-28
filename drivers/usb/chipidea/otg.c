@@ -30,6 +30,8 @@ u32 hw_read_otgsc(struct ci_hdrc *ci, u32 mask)
 	struct ci_hdrc_cable *cable;
 	u32 val = hw_read(ci, OP_OTGSC, mask);
 
+	dev_err(ci->dev, "%s: 0x%x & 0x%0x\n", __func__, val, mask);
+
 	/*
 	 * If using extcon framework for VBUS and/or ID signal
 	 * detection overwrite OTGSC register value
@@ -128,8 +130,11 @@ enum ci_role ci_otg_role(struct ci_hdrc *ci)
 
 void ci_handle_vbus_change(struct ci_hdrc *ci)
 {
+	dev_err(ci->dev, "%s\n", __func__);
+
 	if (!ci->is_otg)
 		return;
+
 
 	if (hw_read_otgsc(ci, OTGSC_BSV) && !ci->vbus_active)
 		usb_gadget_vbus_connect(&ci->gadget);
@@ -149,6 +154,7 @@ static int hw_wait_vbus_lower_bsv(struct ci_hdrc *ci)
 {
 	unsigned long elapse = jiffies + msecs_to_jiffies(5000);
 	u32 mask = OTGSC_BSV;
+	dev_err(ci->dev, "%s\n", __func__);
 
 	while (hw_read_otgsc(ci, mask)) {
 		if (time_after(jiffies, elapse)) {
@@ -165,6 +171,7 @@ static int hw_wait_vbus_lower_bsv(struct ci_hdrc *ci)
 static void ci_handle_id_switch(struct ci_hdrc *ci)
 {
 	enum ci_role role = ci_otg_role(ci);
+	dev_err(ci->dev, "%s\n", __func__);
 
 	if (role != ci->role) {
 		dev_dbg(ci->dev, "switching from %s to %s\n",
@@ -197,6 +204,8 @@ static void ci_otg_work(struct work_struct *work)
 {
 	struct ci_hdrc *ci = container_of(work, struct ci_hdrc, work);
 
+	dev_err(ci->dev, "%s %d\n", __func__, ci->id_event);
+
 	if (ci_otg_is_fsm_mode(ci) && !ci_otg_fsm_work(ci)) {
 		enable_irq(ci->irq);
 		return;
@@ -226,6 +235,7 @@ static void ci_otg_work(struct work_struct *work)
  */
 int ci_hdrc_otg_init(struct ci_hdrc *ci)
 {
+	dev_err(ci->dev, "%s\n", __func__);
 	INIT_WORK(&ci->work, ci_otg_work);
 	ci->wq = create_freezable_workqueue("ci_otg");
 	if (!ci->wq) {
@@ -245,6 +255,7 @@ int ci_hdrc_otg_init(struct ci_hdrc *ci)
  */
 void ci_hdrc_otg_destroy(struct ci_hdrc *ci)
 {
+	dev_err(ci->dev, "%s\n", __func__);
 	if (ci->wq) {
 		flush_workqueue(ci->wq);
 		destroy_workqueue(ci->wq);

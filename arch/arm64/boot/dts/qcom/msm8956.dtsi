@@ -1295,7 +1295,7 @@
 				      "bus",
 				      "vsync";
 
-			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+			interrupts = <GIC_SPI 72 0>;
 
 			interrupt-controller;
 			#interrupt-cells = <1>;
@@ -1310,7 +1310,9 @@
 				reg-names = "mdp_phys";
 
 				interrupt-parent = <&mdss>;
-				interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
+				interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
+
+				// qcom,platform-te-gpio = <&msm_gpio 24 0>;
 
 				interconnects = <&snoc MASTER_MDP_PORT0 &bimc SLAVE_EBI_CH0>,
 					<&snoc MASTER_MDP_PORT1 &bimc SLAVE_EBI_CH0>;
@@ -1361,7 +1363,7 @@
 				#size-cells = <0>;
 
 				interrupt-parent = <&mdss>;
-				interrupts = <4 IRQ_TYPE_LEVEL_HIGH>;
+				interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
 
 				vdda-supply = <&pm8950_l1>;
 				vddio-supply = <&pm8950_l6>;

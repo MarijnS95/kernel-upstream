@@ -593,6 +593,9 @@ static int ci_cable_notifier(struct notifier_block *nb, unsigned long event,
 	struct ci_hdrc_cable *cbl = container_of(nb, struct ci_hdrc_cable, nb);
 	struct ci_hdrc *ci = cbl->ci;
 
+	// dev_err(&cbl->edev->dev, "%s: Changed to %d\n", __func__, event);
+	dev_err(cbl->ci->dev, "%s: Changed to %d\n", __func__, event);
+
 	cbl->connected = event;
 	cbl->changed = true;
 
@@ -694,10 +697,12 @@ static int ci_get_platdata(struct device *dev,
 	if (of_property_read_bool(dev->of_node, "extcon")) {
 		/* Each one of them is not mandatory */
 		ext_vbus = extcon_get_edev_by_phandle(dev, 0);
+		dev_err(dev, "vbus extcon: %px %d\n", ext_vbus, PTR_ERR(ext_vbus));
 		if (IS_ERR(ext_vbus) && PTR_ERR(ext_vbus) != -ENODEV)
 			return PTR_ERR(ext_vbus);
 
 		ext_id = extcon_get_edev_by_phandle(dev, 1);
+		dev_err(dev, "id extcon: %px %d\n", ext_id, PTR_ERR(ext_id));
 		if (IS_ERR(ext_id) && PTR_ERR(ext_id) != -ENODEV)
 			return PTR_ERR(ext_id);
 	}
@@ -1027,8 +1032,11 @@ static int ci_hdrc_probe(struct platform_device *pdev)
 		}
 	}
 
+	dev_err(dev, "dr_mode match: %d\n", dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_PERIPHERAL);
+
 	if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_PERIPHERAL) {
 		ret = ci_hdrc_gadget_init(ci);
+		dev_err(dev, "init gadget: %d\n", ret);
 		if (ret) {
 			if (ret == -ENXIO)
 				dev_info(dev, "doesn't support gadget\n");

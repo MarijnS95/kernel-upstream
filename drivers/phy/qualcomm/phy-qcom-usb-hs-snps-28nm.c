@@ -77,6 +77,8 @@ static int qcom_snps_hsphy_config_regulators(struct hsphy_priv *priv, int high)
 	int old_uV[VREG_NUM];
 	int min, ret, i;
 
+	pr_err("%s\n", __func__);
+
 	min = high ? 1 : 0; /* low or none? */
 
 	for (i = 0; i < VREG_NUM; i++) {
@@ -100,6 +102,8 @@ roll_back:
 static int qcom_snps_hsphy_enable_regulators(struct hsphy_priv *priv)
 {
 	int ret;
+
+	pr_err("%s\n", __func__);
 
 	ret = qcom_snps_hsphy_config_regulators(priv, 1);
 	if (ret)
@@ -130,6 +134,8 @@ unconfig_regulators:
 
 static void qcom_snps_hsphy_disable_regulators(struct hsphy_priv *priv)
 {
+	pr_err("%s\n", __func__);
+
 	regulator_bulk_disable(VREG_NUM, priv->vregs);
 	regulator_set_load(priv->vregs[VDDA_1P8].consumer, 0);
 	regulator_set_load(priv->vregs[VDDA_3P3].consumer, 0);
@@ -140,6 +146,8 @@ static int qcom_snps_hsphy_set_mode(struct phy *phy, enum phy_mode mode, int sub
 {
 	struct hsphy_priv *priv = phy_get_drvdata(phy);
 
+	dev_err(&phy->dev, "%s\n", __func__);
+
 	priv->mode = mode;
 
 	return 0;
@@ -148,6 +156,8 @@ static int qcom_snps_hsphy_set_mode(struct phy *phy, enum phy_mode mode, int sub
 static void qcom_snps_hsphy_enable_hv_interrupts(struct hsphy_priv *priv)
 {
 	u32 val;
+
+	pr_err("%s\n", __func__);
 
 	/* Clear any existing interrupts before enabling the interrupts */
 	val = ulpi_read(priv->ulpi, PHY_INTR_CLEAR0);
@@ -185,6 +195,8 @@ static void qcom_snps_hsphy_disable_hv_interrupts(struct hsphy_priv *priv)
 {
 	u32 val;
 
+	pr_err("%s\n", __func__);
+
 	val = ulpi_read(priv->ulpi, PHY_INTR_MASK0);
 	val &= ~DPDM_MASK;
 	ulpi_write(priv->ulpi, PHY_INTR_MASK0, val);
@@ -205,7 +217,10 @@ static void qcom_snps_hsphy_enter_retention(struct hsphy_priv *priv)
 {
 	u32 val;
 
+	pr_err("%s\n", __func__);
+
 	val = ulpi_read(priv->ulpi, PHY_CTRL_COMMON0);
+
 	val |= SIDDQ;
 	ulpi_write(priv->ulpi, PHY_CTRL_COMMON0, val);
 }
@@ -213,6 +228,8 @@ static void qcom_snps_hsphy_enter_retention(struct hsphy_priv *priv)
 static void qcom_snps_hsphy_exit_retention(struct hsphy_priv *priv)
 {
 	u32 val;
+
+	pr_err("%s\n", __func__);
 
 	val = ulpi_read(priv->ulpi, PHY_CTRL_COMMON0);
 	val &= ~SIDDQ;
@@ -224,6 +241,7 @@ static int qcom_snps_hsphy_vbus_notifier(struct notifier_block *nb,
 {
 	struct hsphy_priv *priv = container_of(nb, struct hsphy_priv,
 						    vbus_notify);
+	pr_err("%s\n", __func__);
 	priv->cable_connected = !!event;
 	return 0;
 }
@@ -232,6 +250,7 @@ static int qcom_snps_hsphy_power_on(struct phy *phy)
 {
 	struct hsphy_priv *priv = phy_get_drvdata(phy);
 	int ret;
+	dev_err(&phy->dev, "%s\n", __func__);
 
 	priv->cable_connected_at_power_on = priv->cable_connected;
 
@@ -256,6 +275,7 @@ static int qcom_snps_hsphy_power_on(struct phy *phy)
 static int qcom_snps_hsphy_power_off(struct phy *phy)
 {
 	struct hsphy_priv *priv = phy_get_drvdata(phy);
+	dev_err(&phy->dev, "%s\n", __func__);
 
 	if (priv->cable_connected_at_power_on) {
 		qcom_snps_hsphy_enable_hv_interrupts(priv);
@@ -272,6 +292,7 @@ static int qcom_snps_hsphy_power_off(struct phy *phy)
 static int qcom_snps_hsphy_reset(struct hsphy_priv *priv)
 {
 	int ret;
+	pr_err("%s\n", __func__);
 
 	ret = reset_control_assert(priv->phy_reset);
 	if (ret)
@@ -293,6 +314,7 @@ static void qcom_snps_hsphy_init_sequence(struct hsphy_priv *priv)
 	const struct hsphy_data *data = priv->data;
 	const struct hsphy_init_seq *seq;
 	int i;
+	pr_err("%s\n", __func__);
 
 	/* Device match data is optional. */
 	if (!data)
@@ -310,6 +332,8 @@ static void qcom_snps_hsphy_init_sequence(struct hsphy_priv *priv)
 static int qcom_snps_hsphy_por_reset(struct hsphy_priv *priv)
 {
 	int ret;
+
+	pr_err("%s\n", __func__);
 
 	ret = reset_control_assert(priv->por_reset);
 	if (ret)
@@ -430,6 +454,7 @@ static int qcom_snps_hsphy_probe(struct ulpi *ulpi)
 	priv->vregs[VDDA_3P3].supply = "vdda3p3";
 
 	ret = devm_regulator_bulk_get(dev, VREG_NUM, priv->vregs);
+	dev_err(dev, "reg bulk get: %d\n", ret);
 	if (ret)
 		return ret;
 
@@ -454,9 +479,13 @@ static int qcom_snps_hsphy_probe(struct ulpi *ulpi)
 		dev_err(dev, "Failed to get extcon by phandle. Trying remote node");
 
 		extcon_node = of_graph_get_remote_node(dev->of_node, -1, -1);
+		dev_err(dev, "Extcon node is %px\n", extcon_node);
 		if (extcon_node) {
+			dev_err(dev, "Extcon node name: %s\n", extcon_node->name);
 			priv->vbus_edev = extcon_find_edev_by_node(extcon_node);
+			dev_err(dev, "vbus_edev is %px\n", priv->vbus_edev);
 			if (IS_ERR(priv->vbus_edev)) {
+				dev_err(dev, "vbus_edev ptr_err is %ld", PTR_ERR(priv->vbus_edev));
 				if (PTR_ERR(priv->vbus_edev) != -ENODEV) {
 					of_node_put(extcon_node);
 					return PTR_ERR(priv->vbus_edev);
@@ -470,6 +499,7 @@ static int qcom_snps_hsphy_probe(struct ulpi *ulpi)
 	}
 
 	if (priv->vbus_edev) {
+		dev_err(dev, "Registering extcon notifier\n");
 		priv->vbus_notify.notifier_call = qcom_snps_hsphy_vbus_notifier;
 		ret = devm_extcon_register_notifier(dev, priv->vbus_edev,
 						    EXTCON_USB,
@@ -482,12 +512,14 @@ static int qcom_snps_hsphy_probe(struct ulpi *ulpi)
 	priv->data = device_get_match_data(dev);
 
 	phy = devm_phy_create(dev, dev->of_node, &qcom_snps_hsphy_ops);
+	dev_err(dev, "phy create: %px\n", phy);
 	if (IS_ERR(phy))
 		return PTR_ERR(phy);
 
 	phy_set_drvdata(phy, priv);
 
 	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+	dev_err(dev, "Registered as %px %ld\n", provider, PTR_ERR_OR_ZERO(provider));
 	return PTR_ERR_OR_ZERO(provider);
 }
 

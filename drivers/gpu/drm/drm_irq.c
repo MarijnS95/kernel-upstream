@@ -51,6 +51,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#define DEBUG
+
 
 #include <linux/export.h>
 #include <linux/interrupt.h>	/* For task queue support */
@@ -108,6 +110,8 @@ int drm_irq_install(struct drm_device *dev, int irq)
 	int ret;
 	unsigned long sh_flags = 0;
 
+	dev_err(dev->dev, "%s installing irq %d\n", __func__, irq);
+
 	if (irq == 0)
 		return -EINVAL;
 
@@ -131,6 +135,7 @@ int drm_irq_install(struct drm_device *dev, int irq)
 
 	ret = request_irq(irq, dev->driver->irq_handler,
 			  sh_flags, dev->driver->name, dev);
+	dev_err(dev->dev, "%s %d request_irq: %d\n", __func__, irq, ret);
 
 	if (ret < 0) {
 		dev->irq_enabled = false;

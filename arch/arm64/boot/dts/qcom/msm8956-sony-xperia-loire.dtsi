@@ -294,11 +294,14 @@
 	disp_reset_n_gpio: disp_reset_n_gpio {
 		mux {
 			pins = "gpio25";
+		// pins = "gpio25" , "gpio66", "gpio107";
 			function = "gpio";
 		};
 		config {
 			pins = "gpio25";
+		// pins = "gpio25" , "gpio66", "gpio107";
 			drive-strength = <2>;
+			bias-disable = <0>;
 			output-high;
 		};
 	};

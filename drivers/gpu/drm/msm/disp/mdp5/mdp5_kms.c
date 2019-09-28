@@ -7,6 +7,8 @@
 
 #include <linux/interconnect.h>
 #include <linux/of_irq.h>
+#include <linux/of_gpio.h>
+#include <linux/gpio.h>
 
 #include "msm_drv.h"
 #include "msm_gem.h"
@@ -670,7 +672,7 @@ struct msm_kms *mdp5_kms_init(struct drm_device *dev)
 	struct mdp5_cfg *config;
 	struct msm_kms *kms;
 	struct msm_gem_address_space *aspace;
-	int irq, i, ret;
+	int irq, i, ret, gpio, irq2;
 
 	/* priv->kms would have been populated by the MDP5 driver */
 	kms = priv->kms;
@@ -684,11 +686,18 @@ struct msm_kms *mdp5_kms_init(struct drm_device *dev)
 	pdev = mdp5_kms->pdev;
 
 	irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
+	// gpio = of_get_named_gpio(pdev->dev.of_node,
+	// 				"qcom,platform-te-gpio", 0);
+	// irq = gpio_to_irq(gpio);
+	// dev_err(dev->dev, "gpio: %d, irq: %d, before: %d\n", gpio, irq, irq2);
+
 	if (irq < 0) {
 		ret = irq;
 		DRM_DEV_ERROR(&pdev->dev, "failed to get irq: %d\n", ret);
 		goto fail;
 	}
+
+	dev_err(&pdev->dev, "VSYNC IRQ AT %d", irq);
 
 	kms->irq = irq;
 

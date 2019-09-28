@@ -65,8 +65,10 @@ static int ci_ulpi_write(struct device *dev, u8 addr, u8 val)
 
 int ci_ulpi_init(struct ci_hdrc *ci)
 {
-	if (ci->platdata->phy_mode != USBPHY_INTERFACE_MODE_ULPI)
+	if (ci->platdata->phy_mode != USBPHY_INTERFACE_MODE_ULPI) {
+		dev_err(ci->dev, "phy_mode != USBPHY_INTERFACE_MODE_ULPI\n");
 		return 0;
+	}
 
 	/*
 	 * Set PORTSC correctly so we can read/write ULPI registers for
@@ -79,6 +81,8 @@ int ci_ulpi_init(struct ci_hdrc *ci)
 	ci->ulpi = ulpi_register_interface(ci->dev, &ci->ulpi_ops);
 	if (IS_ERR(ci->ulpi))
 		dev_err(ci->dev, "failed to register ULPI interface");
+
+	dev_err(ci->dev, "%s ok\n", __func__);
 
 	return PTR_ERR_OR_ZERO(ci->ulpi);
 }

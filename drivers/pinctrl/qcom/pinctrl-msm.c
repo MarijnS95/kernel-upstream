@@ -979,6 +979,8 @@ static void msm_gpio_irq_handler(struct irq_desc *desc)
 		val = msm_readl_intr_status(pctrl, g);
 		if (val & BIT(g->intr_status_bit)) {
 			irq_pin = irq_find_mapping(gc->irq.domain, i);
+			if (irq_pin == 97)
+				dev_err(chip->parent_device, "%s: %d\n", __func__, irq_pin);
 			generic_handle_irq(irq_pin);
 			handled++;
 		}

@@ -350,12 +350,19 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
 static void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
 {
 	u32 irqstat, irqnr;
+	int irq;
 	struct gic_chip_data *gic = &gic_data[0];
 	void __iomem *cpu_base = gic_data_cpu_base(gic);
 
 	do {
 		irqstat = readl_relaxed(cpu_base + GIC_CPU_INTACK);
 		irqnr = irqstat & GICC_IAR_INT_ID_MASK;
+
+		irq = irq_find_mapping(gic->domain, irqnr);
+
+		if (irq == 97)
+			dev_err(gic->chip.parent_device, "%u irq %u triggered with %u\n",
+				irqnr, irq, irqstat);
 
 		if (likely(irqnr > 15 && irqnr < 1020)) {
 			if (static_branch_likely(&supports_deactivate_key))

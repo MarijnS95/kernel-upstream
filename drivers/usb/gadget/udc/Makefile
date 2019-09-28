@@ -4,6 +4,9 @@ CFLAGS_trace.o			:= -I$(src)
 
 udc-core-y			:= core.o trace.o
 
+ccflags-y += -DDEBUG -DVERBOSE_DEBUG
+subdir-ccflags-y += -DDEBUG -DVERBOSE_DEBUG
+
 #
 # USB peripheral controller drivers
 #
