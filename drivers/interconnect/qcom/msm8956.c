@@ -327,6 +327,14 @@ static struct qcom_icc_desc msm8956_snoc = {
 	.num_nodes = ARRAY_SIZE(msm8956_snoc_nodes),
 };
 
+static struct qcom_icc_node *msm8956_snoc_mm_nodes[] = {
+};
+
+static struct qcom_icc_desc msm8956_snoc_mm = {
+	.nodes = msm8956_snoc_mm_nodes,
+	.num_nodes = ARRAY_SIZE(msm8956_snoc_mm_nodes),
+};
+
 static int qcom_icc_aggregate(struct icc_node *node, u32 avg_bw, u32 peak_bw,
 			      u32 *agg_avg, u32 *agg_peak)
 {
@@ -522,6 +530,7 @@ static const struct of_device_id msm8956_noc_of_match[] = {
 	{ .compatible = "qcom,msm8956-bimc", .data = &msm8956_bimc },
 	{ .compatible = "qcom,msm8956-pcnoc", .data = &msm8956_pcnoc },
 	{ .compatible = "qcom,msm8956-snoc", .data = &msm8956_snoc },
+	{ .compatible = "qcom,msm8956-snoc-mm", .data = &msm8956_snoc_mm },
 	{ },
 };
 MODULE_DEVICE_TABLE(of, msm8956_noc_of_match);
