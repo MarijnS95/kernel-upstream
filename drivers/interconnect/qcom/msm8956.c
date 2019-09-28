@@ -19,7 +19,8 @@
 #define RPM_BUS_MASTER_REQ	0x73616d62
 #define RPM_BUS_SLAVE_REQ	0x766c7362
 
-enum {
+enum {	
+	MSM8956_MASTER_GRAPHICS_3D = 26,
 };
 
 #define to_qcom_provider(_provider) \
@@ -71,9 +72,9 @@ struct qcom_icc_desc {
 	size_t num_nodes;
 };
 
-#define DEFINE_QNODE(_name, _id, _buswidth, _mas_rpm_id, _slv_rpm_id,	\
-		     ...)						\
-		static struct qcom_icc_node _name = {			\
+#define DEFINE_QNODE(_idx, _name, _id, _buswidth, _mas_rpm_id,		\
+		_slv_rpm_id, ...)					\
+	[_idx] = &(struct qcom_icc_node) {				\
 		.name = #_name,						\
 		.id = _id,						\
 		.buswidth = _buswidth,					\
@@ -81,7 +82,7 @@ struct qcom_icc_desc {
 		.slv_rpm_id = _slv_rpm_id,				\
 		.num_links = ARRAY_SIZE(((int[]){ __VA_ARGS__ })),	\
 		.links = { __VA_ARGS__ },				\
-	}
+	},
 
 static struct qcom_icc_node *msm8956_bimc_nodes[] = {
 };
@@ -107,7 +108,12 @@ static struct qcom_icc_desc msm8956_snoc = {
 	.num_nodes = ARRAY_SIZE(msm8956_snoc_nodes),
 };
 
+/* TODO: Move where-ever */
+#define ICBID_MASTER_GFX3D 6
+
 static struct qcom_icc_node *msm8956_snoc_mm_nodes[] = {
+	DEFINE_QNODE(MASTER_OXILI, mas_oxili, MSM8956_MASTER_GRAPHICS_3D, 16,
+			ICBID_MASTER_GFX3D, -1)
 };
 
 static struct qcom_icc_desc msm8956_snoc_mm = {
