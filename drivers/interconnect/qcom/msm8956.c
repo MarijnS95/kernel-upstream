@@ -721,6 +721,56 @@ static int qnoc_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, qp);
 
+	{
+		int id;
+		u64 rate;
+
+		rate =  6400000000;
+
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, 0, rate);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 34, 400000000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 86, 793600000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, 115, 793600000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, 45, 853600000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 29, 853600000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, 134, 853600000);
+		ret |= qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, 197, 853600000);
+		dev_err(dev, "manually hacking rates: %d\n", ret);
+
+
+		do_div(rate, 16);
+		dev_err(dev, "Setting clocks to %llu\n", rate);
+
+		for(id=0;id<qp->num_clks;++id)
+			clk_set_rate(qp->bus_clks[id].clk, rate);
+	}
+
+#if 0
+	{
+		int id, r;
+		u32 val = 400000000;
+
+		dev_notice(dev, "Starting test!\n");
+		/*clk_set_rate(qp->bus_clk, val);
+		clk_set_rate(qp->bus_a_clk, val);*/
+		for(id=0;id<qp->num_clks;++id)
+			clk_set_rate(qp->bus_clks[id].clk, val);
+
+		for (id=0;id<1000;id++) {
+			r = qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_MASTER_REQ, id, val);
+			if (!r)
+				pr_info("*** BMAS %d\n", id);
+
+			r = qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE, RPM_BUS_SLAVE_REQ, id, val);
+			if (!r)
+				pr_info("*** BSLV %d\n", id);
+
+			//r = qcom_icc_rpm_smd_send(QCOM_SMD_RPM_SLEEP_STATE, RPM_BUS_MASTER_REQ, id, val);
+			//r = qcom_icc_rpm_smd_send(QCOM_SMD_RPM_SLEEP_STATE, RPM_BUS_SLAVE_REQ, id, val);
+		}
+	}
+#endif
+
 	return 0;
 err:
 	list_for_each_entry(node, &provider->nodes, node_list) {
