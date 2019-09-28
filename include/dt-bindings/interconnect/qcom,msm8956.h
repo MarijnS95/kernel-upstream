@@ -10,6 +10,31 @@
 #define __DT_BINDINGS_INTERCONNECT_QCOM_MSM8956_H
 
 /* BIMC */
+#define MASTER_SMMNOC_BIMC 0
+#define SLAVE_EBI_CH0 1
+
+/* pcnoc */
+#define MASTER_SNOC_PCNOC 0
+#define PCNOC_INT_2 1
+
+/* snoc_mm */
+#define SNOC_INT_0 0
+#define SLAVE_SNOC_PCNOC 1
+#define SLAVE_QDSS_STM 2
+#define SLAVE_SYSTEM_IMEM 3
+
+#define MASTER_OXILI 4
+#define SLAVE_SMMNOC_BIMC 5
+
+#define MASTER_MDP_PORT0 6
+#define MASTER_MDP_PORT1 7
+
+#define SNOC_MM_INT_0 8
+
+#if 0
+
+
+/* BIMC */
 #define MASTER_AMPSS_M0			0
 //#define MASTER_OXILI			1
 // #define MASTER_MDP_PORT0		2
@@ -18,13 +43,6 @@
 #define MASTER_TCU_0			4
 #define SLAVE_EBI_CH0			5
 #define SLAVE_BIMC_SNOC			6
-
-/* SNOC-MM */
-#define MASTER_OXILI			0
-#define SLAVE_SMMNOC_BIMC		1
-#define MASTER_MDP_PORT0		2
-#define MASTER_MDP_PORT1		3
-#define SNOC_MM_INT_0			4
 
 /* PCNOC */
 #define MASTER_SPDM			0
@@ -97,5 +115,14 @@
 #define SLAVE_LPASS			19
 
 #define SLAVE_SYSTEM_IMEM		20
+/* SNOC-MM */
+#define MASTER_OXILI			21
+#define SLAVE_SMMNOC_BIMC		22
+#define MASTER_MDP_PORT0		23
+#define MASTER_MDP_PORT1		24
+#define SNOC_MM_INT_0			25
+
+#endif
+
 
 #endif

@@ -1066,7 +1066,7 @@
 			operating-points-v2 = <&gpu_opp_table>;
 			iommus = <&gpu_iommu 0>;
 
-			interconnects = <&snoc_mm MASTER_OXILI &bimc SLAVE_EBI_CH0>;
+			interconnects = <&snoc MASTER_OXILI &bimc SLAVE_EBI_CH0>;
 
 			gpu_opp_table: opp_table {
 				compatible = "operating-points-v2";
@@ -1312,8 +1312,8 @@
 				interrupt-parent = <&mdss>;
 				interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
 
-				interconnects = <&snoc_mm MASTER_MDP_PORT0 &bimc SLAVE_EBI_CH0>,
-					<&snoc_mm MASTER_MDP_PORT1 &bimc SLAVE_EBI_CH0>;
+				interconnects = <&snoc MASTER_MDP_PORT0 &bimc SLAVE_EBI_CH0>,
+					<&snoc MASTER_MDP_PORT1 &bimc SLAVE_EBI_CH0>;
 				interconnect-names = "mdp0-mem", "mdp1-mem";//, "rotator-mem";
 
 				/* TODO: Handle TBU and TBU_RT clocks */
@@ -1657,14 +1657,14 @@
 				<&rpmcc RPM_SMD_SNOC_A_CLK>;
 		};
 
-		snoc_mm: interconnect/*@580000*/ {
-			reg = <0x00580000 0x1A000>;
-			compatible = "qcom,msm8956-snoc-mm";
-			#interconnect-cells = <1>;
-			clock-names = "bus", "bus_a";
-			clocks = <&rpmcc RPM_SMD_CNOC_CLK>,
-				<&rpmcc RPM_SMD_CNOC_A_CLK>;
-		};
+		// snoc_mm: interconnect/*@580000*/ {
+		// 	reg = <0x00580000 0x1A000>;
+		// 	compatible = "qcom,msm8956-snoc-mm";
+		// 	#interconnect-cells = <1>;
+		// 	clock-names = "bus", "bus_a";
+		// 	clocks = <&rpmcc RPM_SMD_CNOC_CLK>,
+		// 		<&rpmcc RPM_SMD_CNOC_A_CLK>;
+		// };
 	};
 
 	hexagon@4080000 {
