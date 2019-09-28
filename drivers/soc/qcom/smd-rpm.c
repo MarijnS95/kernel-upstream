@@ -128,14 +128,19 @@ int qcom_rpm_smd_write(struct qcom_smd_rpm *rpm,
 	memcpy(pkt->payload, buf, count);
 
 	ret = rpmsg_send(rpm->rpm_channel, pkt, size);
-	if (ret)
+	if (ret) {
+		dev_err(rpm->dev, "rpmsg_send failed: %d\n", ret);
 		goto out;
+	}
 
 	left = wait_for_completion_timeout(&rpm->ack, RPM_REQUEST_TIMEOUT);
 	if (!left)
 		ret = -ETIMEDOUT;
 	else
 		ret = rpm->ack_status;
+
+	//if (ret)
+	//	dev_err(rpm->dev, "%s: ret: %d\n", __func__, ret);
 
 out:
 	kfree(pkt);
@@ -177,6 +182,8 @@ static int qcom_smd_rpm_callback(struct rpmsg_device *rpdev,
 			memcpy_fromio(msgbuf, msg->message, len);
 			msgbuf[len - 1] = 0;
 
+			//dev_err(rpm->dev, "RPM_MSG_TYPE_ERR: %s\n", msgbuf);
+
 			if (!strcmp(msgbuf, "resource does not exist"))
 				status = -ENXIO;
 			else
@@ -210,6 +217,7 @@ static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
 
 	rpm->icc = platform_device_register_data(&rpdev->dev, "icc_smd_rpm", -1,
 						 NULL, 0);
+	dev_err(&rpdev->dev, "Registered icc: %px\n", rpm->icc);
 	if (IS_ERR(rpm->icc))
 		return PTR_ERR(rpm->icc);
 

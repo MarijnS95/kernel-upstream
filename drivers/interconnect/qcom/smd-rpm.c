@@ -55,6 +55,8 @@ static int qcom_icc_rpm_smd_probe(struct platform_device *pdev)
 {
 	icc_smd_rpm = dev_get_drvdata(pdev->dev.parent);
 
+	dev_err(&pdev->dev, "%s\n", __func__);
+
 	if (!icc_smd_rpm) {
 		dev_err(&pdev->dev, "unable to retrieve handle to RPM\n");
 		return -ENODEV;

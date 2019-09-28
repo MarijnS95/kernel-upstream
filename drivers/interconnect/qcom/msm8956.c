@@ -567,7 +567,7 @@ static int qcom_icc_aggregate(struct icc_node *node, u32 avg_bw, u32 peak_bw,
 static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
 {
 	struct qcom_icc_provider *qp;
-	struct qcom_icc_node *qn;
+	struct qcom_icc_node *qn, *qn_dest;
 	struct icc_provider *provider;
 	struct icc_node *n;
 	u64 sum_bw;
@@ -577,11 +577,19 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
 	u32 agg_peak = 0;
 	int ret, i;
 
+	return 0;
+
+	if (dst != NULL)
+		qcom_icc_set(dst, NULL);
+
 	qn = src->data;
 	provider = src->provider;
 	qp = to_qcom_provider(provider);
 
-	dev_info(provider->dev, "%s\n", __func__);
+	if (dst) {
+		qn_dest = dst->data;
+		dev_info(provider->dev, "%s for %s->%s\n", __func__, qn->name, qn_dest->name);
+	}
 
 	list_for_each_entry(n, &provider->nodes, node_list)
 		qcom_icc_aggregate(n, n->avg_bw, n->peak_bw,
@@ -589,6 +597,8 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
 
 	sum_bw = icc_units_to_bps(agg_avg);
 	max_peak_bw = icc_units_to_bps(agg_peak);
+
+	dev_info(provider->dev, "bw: sum: %llu, max: %llu\n", sum_bw, max_peak_bw);
 
 	/* send bandwidth request message to the RPM processor */
 	if (qn->mas_rpm_id != -1) {
@@ -649,10 +659,15 @@ static int qnoc_probe(struct platform_device *pdev)
 	int ret;
 
 	/* wait for the RPM proxy */
-	if (!qcom_icc_rpm_smd_available())
+	if (!qcom_icc_rpm_smd_available()) {
+		dev_err(dev, "rpm smd not available yet!\n");
 		return -EPROBE_DEFER;
+	} else {
+		dev_err(dev, "rpm smd available!\n");
+	}
 
 	desc = of_device_get_match_data(dev);
+	dev_err(dev, "match data %px\n", desc);
 	if (!desc)
 		return -EINVAL;
 
@@ -674,8 +689,11 @@ static int qnoc_probe(struct platform_device *pdev)
 
 	qp->num_clks = ARRAY_SIZE(bus_clocks);
 	ret = devm_clk_bulk_get(dev, qp->num_clks, qp->bus_clks);
+	dev_err(dev, "clk bulk: %d\n", ret);
 	if (ret)
 		return ret;
+
+	dev_err(dev, "passed first part\n");
 
 	ret = clk_bulk_prepare_enable(qp->num_clks, qp->bus_clks);
 	if (ret)

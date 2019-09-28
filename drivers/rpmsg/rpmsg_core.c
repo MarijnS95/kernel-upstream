@@ -106,12 +106,20 @@ EXPORT_SYMBOL(rpmsg_destroy_ept);
  */
 int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
 {
+	int ret;
+
 	if (WARN_ON(!ept))
 		return -EINVAL;
-	if (!ept->ops->send)
+	if (!ept->ops->send) {
+		dev_err(&ept->rpdev->dev, "%s: No send function!\n", __func__);
 		return -ENXIO;
+	}
 
-	return ept->ops->send(ept, data, len);
+
+	ret = ept->ops->send(ept, data, len);
+	if (ret)
+		dev_info(&ept->rpdev->dev, "%s failed with %d!\n", __func__, ret);
+	return ret;
 }
 EXPORT_SYMBOL(rpmsg_send);
 
