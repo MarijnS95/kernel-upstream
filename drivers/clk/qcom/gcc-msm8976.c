@@ -68,7 +68,7 @@ enum {
 
 /* MSM8956/76 - for SDCC1 */
 static const struct parent_map gcc_parent_map_1[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL0_OUT_MAIN, 1 },
 	{ P_GPLL4_OUT, 2 },
 };
@@ -80,7 +80,7 @@ static const char * const gcc_parent_names_1[] = {
 };
 
 static const struct parent_map gcc_parent_map_v1_1[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL0_OUT_MAIN, 1 },
 	{ P_GPLL2_OUT, 4 },
 };
@@ -92,7 +92,7 @@ static const char * const gcc_parent_names_v1_1[] = {
 };
 
 static const struct parent_map gcc_parent_map_2[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL0_OUT_MAIN, 1 },
 	{ P_GPLL2_AUX, 3 },
 	{ P_GPLL4_OUT, 2 },
@@ -106,7 +106,7 @@ static const char * const gcc_parent_names_2[] = {
 };
 
 static const struct parent_map gcc_parent_map_3[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL0_OUT_MAIN, 1 },
 	{ P_GPLL2_AUX, 3 },
 	{ P_GPLL6_AUX, 2 },
@@ -120,12 +120,12 @@ static const char * const gcc_parent_names_3[] = {
 };
 
 static const struct parent_map gcc_parent_map_4[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL0_OUT_MAIN, 1 },
 };
 
 static const struct parent_map gcc_parent_map_4_fs[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL0_OUT, 2 },
 };
 
@@ -135,7 +135,7 @@ static const char * const gcc_parent_names_4[] = {
 };
 
 static const struct parent_map gcc_parent_map_5[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL4_OUT, 2 },
 	{ P_GPLL6_OUT_MAIN, 1 },
 };
@@ -147,7 +147,7 @@ static const char * const gcc_parent_names_5[] = {
 };
 
 static const struct parent_map gcc_parent_map_6[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL0_OUT_MAIN, 1 },
 	{ P_GPLL4_OUT_MAIN, 5 },
 };
@@ -159,7 +159,7 @@ static const char * const gcc_parent_names_6[] = {
 };
 
 static const struct parent_map gcc_parent_map_7_mdp[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL6_OUT, 3 },
 	{ P_GPLL0_OUT_MDP, 6 },
 };
@@ -181,7 +181,7 @@ static const char * const gcc_parent_names_7[] = {
 };
 
 static const struct parent_map gcc_parent_map_8[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL0_OUT_MAIN, 1 },
 };
 
@@ -209,7 +209,7 @@ static const char * const gcc_parent_names_8_gp[] = {
 };
 
 static const struct parent_map gcc_parent_map_9[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL6_OUT_MAIN, 6 },
 };
 
@@ -227,7 +227,7 @@ static const char * const gcc_parent_names_10[] = {
 };
 
 static const struct parent_map gcc_parent_map_sdcc_ice[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL0_OUT_M, 3 },
 };
 
@@ -237,7 +237,7 @@ static const char * const gcc_parent_names_sdcc_ice[] = {
 };
 
 static const struct parent_map gcc_parent_map_cci[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL0_AUX, 2 },
 };
 
@@ -247,7 +247,7 @@ static const char * const gcc_parent_names_cci[] = {
 };
 
 static const struct parent_map gcc_parent_map_cpp[] = {
-	{ P_XO, 0},
+	{ P_XO, 0 },
 	{ P_GPLL0_OUT_MAIN, 1 },
 	{ P_GPLL4_AUX, 3 },
 };
