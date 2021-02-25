@@ -799,7 +799,7 @@
 			status = "disabled";
 		};
 
-		sdhc_1: mmc@7824000 {
+		sdhc_1: sdhci@7824000 {
 			compatible = "qcom,sdhci-msm-v4";
 			reg = <0x07824900 0x500>, <0x07824000 0x800>;
 			reg-names = "hc_mem", "core_mem";

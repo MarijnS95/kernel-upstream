@@ -85,7 +85,7 @@
 				};
 				system {
 					compatible = "android,system";
-					dev = "/dev/block/platform/soc/7824900.mmc/by-name/system";
+					dev = "/dev/block/platform/soc/7824900.sdhci/by-name/system";
 					type = "ext4";
 					mnt_flags = "ro,barrier=1";
 					// WARNING: verity flag removed
@@ -94,7 +94,7 @@
 				};
 				// odm {
 				// 	compatible = "android,odm";
-				// 	dev = "/dev/block/platform/soc/7824900.mmc/by-name/oem";
+				// 	dev = "/dev/block/platform/soc/7824900.sdhci/by-name/oem";
 				// 	type = "ext4";
 				// 	mnt_flags = "ro,barrier=1";
 				// 	fsmgr_flags = "wait";
